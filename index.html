@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bs/css/bootstrap.min.css">
+    <script src="bs/js/bootstrap.bundle.min.js"> </script>
+    <title>Guess Game</title>
+    <style>
+        button {
+            letter-spacing: 2px;
+            padding: 10px 20px !important;
+            color: white !important;
+            width: 48%;
+        }
+
+        #random-container {
+            height: 40vh;
+            position: relative;
+        }
+
+        #number, #cover {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #number {
+            font-size: 15vw;
+            width: 50vw;
+            height: 25vw;
+        }
+
+        #cover {
+            width: 54vw;
+            height: 25vw;
+        }
+
+        input[type="text"] {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 576px) {
+            #number {
+                font-size: 20vw;
+                width: 60vw;
+                height: 30vw;
+            }
+
+            #cover {
+                width: 64vw;
+                height: 30vw;
+            }
+
+            button {
+                font-size: 1rem;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .d-flex {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Random Number Container -->
+    <div class="container mt-5 rounded bg-dark text-white text-center" id="random-container">
+        <div class="row">
+            <div class="col-12 fw-bold text-center">
+                <span id="number" class="bg-primary">0</span>
+                <span id="cover" class="bg-warning"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Container -->
+    <div class="container mt-4 bg-dark p-3 rounded">
+        <span class="fs-4 text-white d-block" id="score">Score: 0</span>
+        <label class="form-label text-white mt-2">Guess the number</label>
+        <input type="text" id="user" class="form-control mb-2" placeholder="Enter number...">
+        <div class="d-flex justify-content-between gap-2">
+            <button type="button" class="btn btn-warning" id="submit" onclick="submit()">Submit</button>
+            <button class="btn btn-warning" onclick="roll()">Roll</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <span class="fs-4" id="message"></span>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = new bootstrap.Modal(document.getElementById('modal'));
+        const message = document.getElementById('message');
+        const scoreText = document.getElementById('score');
+        const cover = document.getElementById('cover');
+        const user = document.getElementById('user');
+        let score = 0;
+
+        const roll = () => {
+            const randomValue = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('number').textContent = randomValue;
+            message.textContent = 'New number';
+            modal.show();
+        }
+
+        const submit = () => {
+            const userInput = user.value;
+            if (userInput === '' || isNaN(userInput)) {
+                message.textContent = 'Empty or invalid input';
+                modal.show();
+            } else {
+                setTimeout(check, 1000);
+            }
+        }
+
+        const check = () => {
+            const randomNumber = Number(document.getElementById('number').textContent);
+            const userGuess = Number(user.value);
+
+            if (userGuess === randomNumber) {
+                user.value = '';
+                score++;
+                scoreText.textContent = `Score: ${score}`;
+                cover.classList.add('z-n1');
+                message.textContent = 'Nice Guess!';
+            } else {
+                message.textContent = 'Wrong Guess';
+            }
+
+            modal.show();
+            removeCover();
+        }
+
+        const removeCover = () => {
+            setTimeout(() => {
+                if (cover.classList.contains('z-n1')) {
+                    cover.classList.remove('z-n1');
+                }
+            }, 3000);
+        }
+    </script>
+
+</body>
+
+</html>
